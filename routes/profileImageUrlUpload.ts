@@ -60,6 +60,7 @@ const publicOnlyLookup: net.LookupFunction = (hostname, options, callback) => {
 // Only let the server fetch public http(s) URLs: no loopback, private, link-local or metadata addresses, and no redirects
 async function fetchPublicImage (rawUrl: string) {
   const url = new URL(rawUrl)
+  // Only public http(s) image URLs are allowed here.
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     throw new BlockedImageUrlError('Only http and https image URLs are allowed')
   }
