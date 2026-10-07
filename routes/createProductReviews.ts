@@ -12,6 +12,7 @@ import * as utils from '../lib/utils'
 export function createProductReviews () {
   return async (req: Request, res: Response) => {
     const user = security.authenticatedUsers.from(req)
+    // The author comes from the session (or is anonymous), never from the request body
     const author = user?.data?.email ?? 'Anonymous'
 
     try {

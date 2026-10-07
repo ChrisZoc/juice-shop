@@ -132,7 +132,7 @@ export const redirectAllowlist = new Set([
 export const isRedirectAllowed = (url: string) => {
   let allowed = false
   for (const allowedUrl of redirectAllowlist) {
-    allowed = allowed || url === allowedUrl // vuln-code-snippet vuln-line redirectChallenge
+    allowed = allowed || url === allowedUrl
   }
   return allowed
 }
@@ -148,6 +148,20 @@ export const roles = {
 export const deluxeToken = (email: string) => {
   const hmac = crypto.createHmac('sha256', privateKey)
   return hmac.update(email + roles.deluxe).digest('hex')
+}
+
+export const isAdmin = () => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const token = utils.jwtFrom(req)
+    const decodedToken = token && verify(token) && decode(token)
+    if (!decodedToken) {
+      res.status(401).json({ error: 'Authentication required' })
+    } else if (decodedToken?.data?.role === roles.admin) {
+      next()
+    } else {
+      res.status(403).json({ error: 'Malicious activity detected' })
+    }
+  }
 }
 
 export const isAccounting = () => {

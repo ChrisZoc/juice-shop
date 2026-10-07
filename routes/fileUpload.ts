@@ -41,6 +41,7 @@ function handleZipFileUpload ({ file }: Request, res: Response, next: NextFuncti
                 const fileName = entry.path
                 const complaintsDir = path.resolve('uploads/complaints')
                 const absolutePath = path.resolve(complaintsDir, fileName)
+                // Only extract regular files that stay inside uploads/complaints (no zip slip via ../ or absolute paths)
                 if (entry.type === 'File' && absolutePath.startsWith(complaintsDir + path.sep)) {
                   challengeUtils.solveIf(challenges.fileWriteChallenge, () => { return absolutePath === path.resolve('ftp/legal.md') })
                   entry.pipe(fs.createWriteStream(absolutePath).on('error', function (err) { next(err) }))

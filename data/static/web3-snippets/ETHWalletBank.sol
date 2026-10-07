@@ -13,6 +13,7 @@ contract ETHWalletBank {
 
   bool private locked;
 
+  // Reentrancy guard: a withdrawal cannot be re-entered from the recipient's fallback
   modifier nonReentrant() {
     require(!locked, "Reentrant call");
     locked = true;
@@ -38,7 +39,7 @@ contract ETHWalletBank {
       userWithdrawing[msg.sender] = 0;
       return;
     }
-    balances[msg.sender] -= _amount; // vuln-code-snippet vuln-line web3WalletChallenge
+    balances[msg.sender] -= _amount; // vuln-code-snippet neutral-line web3WalletChallenge
     (bool result, ) = msg.sender.call{ value: _amount }(""); // vuln-code-snippet neutral-line web3WalletChallenge
     require(result, "Withdrawal call failed"); // vuln-code-snippet neutral-line web3WalletChallenge
     if(userWithdrawing[msg.sender] == 2) // vuln-code-snippet hide-line

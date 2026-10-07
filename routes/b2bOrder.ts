@@ -9,9 +9,9 @@ import * as security from '../lib/insecurity'
 
 export function b2bOrder () {
   return ({ body }: Request, res: Response, next: NextFunction) => {
+    // orderLinesData is customer-supplied data: it is never evaluated as code
     res.json({ cid: body.cid, orderNo: uniqueOrderNumber(), paymentDue: dateTwoWeeksFromNow() })
   }
-
   function uniqueOrderNumber () {
     return security.hash(`${(new Date()).toString()}_B2B`)
   }
