@@ -25,7 +25,7 @@ export function profileImageUrlUpload () {
         res.status(400).json({ error: 'Invalid image URL' })
         return
       }
-      if (!['http:', 'https:'].includes(parsedUrl.protocol) || ['localhost', '127.0.0.1', '::1'].includes(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.local')) {
+      if (!['http:', 'https:'].includes(parsedUrl.protocol) || ['localhost', '127.0.0.1', '::1', '0.0.0.0'].includes(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.local') || parsedUrl.hostname.endsWith('.internal')) {
         res.status(400).json({ error: 'Image URL not allowed' })
         return
       }
