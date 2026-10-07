@@ -18,6 +18,17 @@ export function profileImageUrlUpload () {
     if (req.body.imageUrl !== undefined) {
       const url = req.body.imageUrl
       if (url.match(/(.)*solve\/challenges\/server-side(.)*/) !== null) req.app.locals.abused_ssrf_bug = true
+      let parsedUrl: URL
+      try {
+        parsedUrl = new URL(url)
+      } catch {
+        res.status(400).json({ error: 'Invalid image URL' })
+        return
+      }
+      if (!['http:', 'https:'].includes(parsedUrl.protocol) || ['localhost', '127.0.0.1', '::1'].includes(parsedUrl.hostname) || parsedUrl.hostname.endsWith('.local')) {
+        res.status(400).json({ error: 'Image URL not allowed' })
+        return
+      }
       const loggedInUser = security.authenticatedUsers.get(req.cookies.token)
       if (loggedInUser) {
         try {
